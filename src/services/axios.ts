@@ -7,6 +7,13 @@ import { signOut } from 'reducers/profileSlice';
 import { store } from 'reducers/store';
 
 const beforeRequest = (config: InternalAxiosRequestConfig) => {
+  const { isLoggedIn, accessToken }: ProfileRecordType = store.getState().profile;
+  if (isLoggedIn) {
+    Object.assign(config.headers as any, {
+      Authorization: `Bearer ${accessToken}`,
+    });
+  }
+
   try {
     if (config.data instanceof FormData) {
       Object.assign(config.headers, { 'Content-Type': 'multipart/form-data' });

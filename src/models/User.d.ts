@@ -1,4 +1,6 @@
 type ProfileRecordType = UserRecordType & {
+  accessToken?: string;
+  refreshToken?: string;
   isLoggedIn: boolean;
 };
 

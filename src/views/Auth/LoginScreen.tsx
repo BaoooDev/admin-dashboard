@@ -17,14 +17,14 @@ const LoginScreen = () => {
 
   const { mutate: login, isPending } = useMutation({
     mutationFn: authService.login,
-    onSuccess: (data: LoginResponse) => {
-      if (data.user.role !== RoleEnum.ADMIN) {
+    onSuccess: ({ user, tokens }: LoginResponse) => {
+      if (user.role !== RoleEnum.ADMIN) {
         enqueueSnackbar('Bạn không có quyền truy cập', { variant: 'error' });
         dispatch(signOut({}));
         return;
       }
 
-      dispatch(signIn(data.user));
+      dispatch(signIn({ ...user, accessToken: tokens.access.token }));
     },
   });
 

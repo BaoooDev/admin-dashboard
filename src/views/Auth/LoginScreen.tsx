@@ -2,28 +2,19 @@ import { LoadingButton } from '@mui/lab';
 import { Container, Paper, TextField } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { InputPassword } from 'components';
-import { useSnackbar } from 'notistack';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { signIn, signOut } from 'reducers/profileSlice';
+import { signIn } from 'reducers/profileSlice';
 import { authService } from 'services';
-import { RoleEnum } from 'utils/enum';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
-  const { enqueueSnackbar } = useSnackbar();
 
   const { control, handleSubmit } = useForm({ mode: 'onChange' });
 
   const { mutate: login, isPending } = useMutation({
     mutationFn: authService.login,
     onSuccess: ({ user, tokens }: LoginResponse) => {
-      if (user.role !== RoleEnum.ADMIN) {
-        enqueueSnackbar('Bạn không có quyền truy cập', { variant: 'error' });
-        dispatch(signOut({}));
-        return;
-      }
-
       dispatch(signIn({ ...user, accessToken: tokens.access.token }));
     },
   });

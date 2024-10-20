@@ -8,10 +8,10 @@ type PaginateParams = {
 };
 
 type PaginateType = {
-  total: number;
-  size: number;
-  pages: number;
-  currentPage: number;
+  page: number;
+  limit: number;
+  totalResults: number;
+  totalPages: number;
 };
 
 type PopupController = {
@@ -21,7 +21,7 @@ type PopupController = {
 
 type CommonSearch = {
   page?: number;
-  size?: number;
+  limit?: number;
   [key: string]: Object;
 };
 

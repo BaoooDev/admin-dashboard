@@ -1,8 +1,10 @@
-import { ArrowDropDown, ArrowLeft, SettingsOutlined } from '@mui/icons-material';
+import { ArrowDropDown, ArrowLeft, SettingsOutlined, UsbRounded } from '@mui/icons-material';
 import { Collapse, List, ListItemButton, ListItemText } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
+import { profileSelector } from 'reducers/profileSlice';
 import { privateRoute } from 'routes';
 
 const StyledListItem = styled(ListItemButton)({
@@ -68,9 +70,11 @@ const MenuItem = ({ path, name, icon, items }: MenuItemProps) => {
 };
 
 const Menu = () => {
+  const { role } = useSelector(profileSelector);
   return (
     <List className='flex flex-col gap-1'>
       <MenuItem {...privateRoute.home} icon={<SettingsOutlined />} />
+      {role === 'admin' && <MenuItem {...privateRoute.user} icon={<UsbRounded />} />}
     </List>
   );
 };

@@ -1,15 +1,19 @@
 import { FileDownloadOutlined } from '@mui/icons-material';
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Button, Grid2, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers';
 import { useMutation } from '@tanstack/react-query';
 import { Spinner, TableRowEmpty } from 'components';
 import { saveAs } from 'file-saver';
+import { DateTime } from 'luxon';
 import { useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { profileSelector } from 'reducers/profileSlice';
 import { authService } from 'services';
+import { useDebounce } from 'react-use';
 
 const Home = () => {
-  const [searchParams] = useState({});
+  const [searchParams, setSearchParams] = useState({});
   const { role } = useSelector(profileSelector);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -32,8 +36,68 @@ const Home = () => {
     if (results.length > 0) setDataImport(results);
   };
 
+  const { control, setValue, watch } = useForm<ExportBody>({
+    defaultValues: {
+      from: undefined,
+      to: undefined,
+    },
+  });
+
+  const formValues = watch();
+
+  useDebounce(
+    () => {
+      const searchParams: ExportBody = { ...formValues };
+      setSearchParams({
+        from: DateTime.fromISO(searchParams.from!).toISODate(),
+        to: DateTime.fromISO(searchParams.to!).toISODate(),
+      });
+    },
+    500,
+    [JSON.stringify(formValues)],
+  );
+
   return (
     <div>
+      <Grid2 container spacing={3}>
+        <Grid2 size={{ xs: 12, md: 3 }}>
+          <Controller
+            control={control}
+            name='from'
+            render={({ field }) => (
+              <DatePicker
+                format='dd/MM/yyyy'
+                label='Từ ngày'
+                {...field}
+                closeOnSelect
+                slotProps={{
+                  field: { clearable: true, onClear: () => setValue('from', undefined) },
+                  textField: { fullWidth: true },
+                }}
+              />
+            )}
+          />
+        </Grid2>
+        <Grid2 size={{ xs: 12, md: 3 }}>
+          <Controller
+            control={control}
+            name='to'
+            render={({ field }) => (
+              <DatePicker
+                format='dd/MM/yyyy'
+                label='Đến ngày'
+                {...field}
+                minDate={watch('from') || null}
+                closeOnSelect
+                slotProps={{
+                  field: { clearable: true, onClear: () => setValue('to', undefined) },
+                  textField: { fullWidth: true },
+                }}
+              />
+            )}
+          />
+        </Grid2>
+      </Grid2>
       {role === 'admin' && (
         <div className='flex items-center justify-end gap-3'>
           <div>
@@ -69,7 +133,7 @@ const Home = () => {
             <TableBody>
               {dataImport.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell>{item.timeOccurence}</TableCell>
+                  <TableCell>{DateTime.fromISO(item.timeOccurence).toFormat('dd/MM/yyyy HH:mm:ss')}</TableCell>
                   <TableCell>{item.pathOne}</TableCell>
                   <TableCell>{item.pathSecond}</TableCell>
                   <TableCell>{item.isChecked ? 'Có' : 'Không'}</TableCell>

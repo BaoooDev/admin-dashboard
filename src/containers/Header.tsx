@@ -32,7 +32,7 @@ const Header = () => {
       >
         <div className='flex h-[56px] items-center justify-center'>
           <Link to={privateRoute.home.path}>
-            <span className='text-2xl font-bold text-red-500'>EVN</span>
+            <span className='text-2xl font-bold text-red-500'>PCTH</span>
           </Link>
         </div>
         <AppMenu />

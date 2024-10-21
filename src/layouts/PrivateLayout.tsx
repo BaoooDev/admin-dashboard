@@ -20,7 +20,7 @@ const PrivateLayout = () => {
   return (
     <main style={{ marginLeft: isMobile ? '0' : '280px' }}>
       <AppHeader />
-      <div className='px-6 py-2'>
+      <div className='p-6'>
         <Routes>
           {Object.values(privateRoute).map(({ path, component }) => (
             <Route key={path} path={path} element={component} />

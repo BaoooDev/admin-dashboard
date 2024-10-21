@@ -1,7 +1,19 @@
 import { FileDownloadOutlined } from '@mui/icons-material';
-import { Button, Grid2, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import {
+  Button,
+  Grid2,
+  Pagination,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+} from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
-import { useMutation } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { Spinner, TableRowEmpty } from 'components';
 import { saveAs } from 'file-saver';
 import { DateTime } from 'luxon';
@@ -11,16 +23,24 @@ import { useSelector } from 'react-redux';
 import { profileSelector } from 'reducers/profileSlice';
 import { authService } from 'services';
 import { useDebounce } from 'react-use';
+import { useSearch } from 'hooks';
 
 const Home = () => {
   const [searchParams, setSearchParams] = useState({});
   const { role } = useSelector(profileSelector);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [dataImport, setDataImport] = useState<TripRecordType[]>([]);
+  const [dataSearch, onSearchChange] = useSearch();
+
+  const { data, isPending, refetch } = useQuery({
+    queryKey: ['authService.getTrips', { ...dataSearch, ...searchParams }],
+    queryFn: () => authService.fetchTrips({ ...dataSearch, ...searchParams }),
+    placeholderData: keepPreviousData,
+  });
+  const { results = [], page, totalPages, totalResults } = data ?? {};
 
   const { mutateAsync: exportExcelMutation } = useMutation({ mutationFn: authService.exportExcel });
-  const { mutateAsync: importExcel, isPending } = useMutation({ mutationFn: authService.importExcel });
+  const { mutateAsync: importExcel } = useMutation({ mutationFn: authService.importExcel });
 
   const handleExport = async () => {
     const blob = await exportExcelMutation(searchParams);
@@ -32,14 +52,15 @@ const Home = () => {
     if (!fileList) return;
     const formData = new FormData();
     formData.append('file', fileList[0]);
-    const results = await importExcel(formData);
-    if (results.length > 0) setDataImport(results);
+    const result = await importExcel(formData);
+    if (result) refetch();
   };
 
   const { control, setValue, watch } = useForm<ExportBody>({
     defaultValues: {
       from: undefined,
       to: undefined,
+      search: undefined,
     },
   });
 
@@ -51,6 +72,7 @@ const Home = () => {
       setSearchParams({
         from: DateTime.fromISO(searchParams.from!).toISODate(),
         to: DateTime.fromISO(searchParams.to!).toISODate(),
+        search: searchParams.search === '' ? undefined : searchParams.search,
       });
     },
     500,
@@ -60,6 +82,13 @@ const Home = () => {
   return (
     <div>
       <Grid2 container spacing={3}>
+        <Grid2 size={{ xs: 12, md: 3 }}>
+          <Controller
+            name='search'
+            control={control}
+            render={({ field }) => <TextField {...field} fullWidth label='Tìm kiếm' />}
+          />
+        </Grid2>
         <Grid2 size={{ xs: 12, md: 3 }}>
           <Controller
             control={control}
@@ -98,8 +127,8 @@ const Home = () => {
           />
         </Grid2>
       </Grid2>
-      {role === 'admin' && (
-        <div className='flex items-center justify-end gap-3'>
+      <div className='mt-2 flex items-center justify-end gap-3'>
+        {role === 'admin' && (
           <div>
             <input ref={inputRef} type='file' hidden onChange={handleChangeFiles} />
             <Button
@@ -111,13 +140,12 @@ const Home = () => {
               Nhập Excel
             </Button>
           </div>
+        )}
 
-          <Button variant='outlined' color='primary' startIcon={<FileDownloadOutlined />} onClick={handleExport}>
-            Xuất Excel
-          </Button>
-        </div>
-      )}
-
+        <Button variant='outlined' color='primary' startIcon={<FileDownloadOutlined />} onClick={handleExport}>
+          Xuất Excel
+        </Button>
+      </div>
       <TableContainer component={Paper}>
         <Spinner loading={isPending}>
           <Table>
@@ -131,7 +159,7 @@ const Home = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {dataImport.map((item) => (
+              {results.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>{DateTime.fromISO(item.timeOccurence).toFormat('dd/MM/yyyy HH:mm:ss')}</TableCell>
                   <TableCell>{item.pathOne}</TableCell>
@@ -139,12 +167,16 @@ const Home = () => {
                   <TableCell>{item.isChecked ? 'Có' : 'Không'}</TableCell>
                 </TableRow>
               ))}
-              <TableRowEmpty visible={!isPending && dataImport.length === 0} />
+              <TableRowEmpty visible={!isPending && totalResults === 0} />
             </TableBody>
-            <caption>{dataImport.length ?? 0} Sự cố</caption>
+            <caption>{totalResults ?? 0} Sự cố</caption>
           </Table>
         </Spinner>
       </TableContainer>
+
+      <div className='flex justify-center'>
+        <Pagination page={page ?? 1} count={totalPages} onChange={(event, value) => onSearchChange({ page: value })} />
+      </div>
     </div>
   );
 };

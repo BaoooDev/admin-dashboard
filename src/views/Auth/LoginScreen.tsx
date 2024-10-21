@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { Container, Paper, TextField } from '@mui/material';
+import { Container, Paper, TextField, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { InputPassword } from 'components';
 import { Controller, useForm } from 'react-hook-form';
@@ -37,7 +37,13 @@ const LoginScreen = () => {
 
   return (
     <Container maxWidth='sm'>
-      <Paper className='flex flex-col gap-10 p-8'>
+      <div className='flex flex-col items-center justify-center gap-2'>
+        <img src={require('assets/images/logo-evnnpc.svg').default} />
+        <Typography variant='h4' className='text-center uppercase text-white'>
+          Quản lý Vận hành hệ thống thông tin
+        </Typography>
+      </div>
+      <Paper className='mt-4 flex flex-col gap-10 p-8'>
         <Controller
           name='email'
           defaultValue=''

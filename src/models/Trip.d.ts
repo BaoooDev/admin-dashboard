@@ -11,3 +11,15 @@ type TripRecordType = {
   indicator: string;
   isChecked: boolean;
 };
+
+type ExportBody = {
+  from?: string;
+  to?: string;
+  search?: string;
+};
+
+type TripParams = ExportBody & PaginateParams;
+
+type TripPaginateType = PaginateType & {
+  results: TripRecordType[];
+};

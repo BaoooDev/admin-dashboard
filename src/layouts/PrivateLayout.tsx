@@ -1,5 +1,4 @@
 import { AppHeader } from 'containers';
-import { useWindowSize } from 'hooks';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
@@ -8,7 +7,6 @@ import { authRoute, privateRoute } from 'routes';
 
 const PrivateLayout = () => {
   const navigator = useNavigate();
-  const { isMobile } = useWindowSize();
   const { isLoggedIn } = useSelector(profileSelector);
 
   useEffect(() => {
@@ -18,16 +16,14 @@ const PrivateLayout = () => {
   }, [isLoggedIn, navigator]);
 
   return (
-    <main style={{ marginLeft: isMobile ? '0' : '280px' }}>
+    <main>
       <AppHeader />
-      <div className='p-6'>
-        <Routes>
-          {Object.values(privateRoute).map(({ path, component }) => (
-            <Route key={path} path={path} element={component} />
-          ))}
-          <Route path='*' element={<Navigate to={privateRoute.home.path} />} />
-        </Routes>
-      </div>
+      <Routes>
+        {Object.values(privateRoute).map(({ path, component }) => (
+          <Route key={path} path={path} element={component} />
+        ))}
+        <Route path='*' element={<Navigate to={privateRoute.home.path} />} />
+      </Routes>
     </main>
   );
 };

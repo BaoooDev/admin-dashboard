@@ -1,4 +1,4 @@
-import { ArrowDropDown, ArrowLeft, SettingsOutlined, UsbRounded } from '@mui/icons-material';
+import { ArrowDropDown, ArrowLeft, Dashboard, SettingsOutlined, UsbRounded } from '@mui/icons-material';
 import { Collapse, List, ListItemButton, ListItemText } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState } from 'react';
@@ -73,6 +73,7 @@ const Menu = () => {
   const { role } = useSelector(profileSelector);
   return (
     <List className='flex flex-col gap-1'>
+      <MenuItem {...privateRoute.dashboard} icon={<Dashboard />} />
       <MenuItem {...privateRoute.home} icon={<SettingsOutlined />} />
       {role === 'admin' && <MenuItem {...privateRoute.user} icon={<UsbRounded />} />}
     </List>

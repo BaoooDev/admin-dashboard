@@ -1,7 +1,6 @@
 import { Logout, Menu } from '@mui/icons-material';
 import { AppBar, Avatar, Button, Drawer, IconButton, Toolbar, Tooltip } from '@mui/material';
 import { AppBreadcrumb, AppMenu } from 'containers';
-import { useWindowSize } from 'hooks';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
@@ -12,7 +11,6 @@ const Header = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const { isMobile } = useWindowSize();
   const { isLoggedIn, name } = useSelector(profileSelector);
 
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -24,11 +22,11 @@ const Header = () => {
   return (
     <>
       <Drawer
-        variant={isMobile ? 'temporary' : 'persistent'}
+        variant={'temporary'}
         anchor='left'
-        open={isMobile ? openDrawer : true}
+        open={openDrawer}
         onClose={() => setOpenDrawer(false)}
-        PaperProps={{ style: { width: '280px', padding: '8px 16px' } }}
+        PaperProps={{ style: { padding: '8px 16px' } }}
       >
         <div className='flex h-[56px] items-center justify-center'>
           <Link to={privateRoute.home.path}>
@@ -40,11 +38,9 @@ const Header = () => {
 
       <AppBar position='sticky' className='bg-white' elevation={1}>
         <Toolbar>
-          {isMobile && (
-            <IconButton onClick={() => setOpenDrawer(true)} className='mr-2'>
-              <Menu />
-            </IconButton>
-          )}
+          <IconButton onClick={() => setOpenDrawer(true)} className='mr-2'>
+            <Menu />
+          </IconButton>
           <AppBreadcrumb />
           <div className='flex-1' />
           {isLoggedIn ? (

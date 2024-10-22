@@ -34,7 +34,7 @@ const Home = () => {
   });
   const { results = [], page, totalPages, totalResults } = data ?? {};
   return (
-    <div>
+    <div className='p-6'>
       {role === 'admin' && (
         <div className='flex items-center justify-end gap-3'>
           <Button

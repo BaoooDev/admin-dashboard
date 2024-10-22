@@ -40,7 +40,7 @@ const Home = () => {
   const { results = [], page, totalPages, totalResults } = data ?? {};
 
   const { mutateAsync: exportExcelMutation } = useMutation({ mutationFn: authService.exportExcel });
-  const { mutateAsync: importExcel } = useMutation({ mutationFn: authService.importExcel });
+  const { mutateAsync: importExcel, isPending: isPendingImport } = useMutation({ mutationFn: authService.importExcel });
 
   const handleExport = async () => {
     const blob = await exportExcelMutation(searchParams);
@@ -80,7 +80,7 @@ const Home = () => {
   );
 
   return (
-    <div>
+    <div className='p-6'>
       <Grid2 container spacing={3}>
         <Grid2 size={{ xs: 12, md: 3 }}>
           <Controller
@@ -147,7 +147,7 @@ const Home = () => {
         </Button>
       </div>
       <TableContainer component={Paper}>
-        <Spinner loading={isPending}>
+        <Spinner loading={isPending || isPendingImport}>
           <Table>
             <TableHead>
               <TableRow>

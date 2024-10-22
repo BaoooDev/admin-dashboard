@@ -23,3 +23,8 @@ type TripParams = ExportBody & PaginateParams;
 type TripPaginateType = PaginateType & {
   results: TripRecordType[];
 };
+
+type TripCountType = {
+  pathSecond: string;
+  count: number;
+};

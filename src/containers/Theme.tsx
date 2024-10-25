@@ -1,7 +1,6 @@
 import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
-import { useNotification } from 'hooks';
 
 export const appTheme = createTheme({
   components: {
@@ -76,7 +75,6 @@ type ContainerType = {
 };
 
 const Theme = ({ children }: ContainerType) => {
-  useNotification();
   return (
     <ThemeProvider theme={responsiveFontSizes(appTheme)}>
       <LocalizationProvider dateAdapter={AdapterLuxon}>{children}</LocalizationProvider>

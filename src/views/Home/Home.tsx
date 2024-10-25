@@ -16,19 +16,21 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { Spinner, TableRowEmpty } from 'components';
 import { saveAs } from 'file-saver';
+import { useSearch } from 'hooks';
 import { DateTime } from 'luxon';
+import { useSnackbar } from 'notistack';
 import { useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
+import { useDebounce } from 'react-use';
 import { profileSelector } from 'reducers/profileSlice';
 import { authService } from 'services';
-import { useDebounce } from 'react-use';
-import { useSearch } from 'hooks';
 
 const Home = () => {
   const [searchParams, setSearchParams] = useState({});
   const { role } = useSelector(profileSelector);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   const [dataSearch, onSearchChange] = useSearch();
 
@@ -53,7 +55,10 @@ const Home = () => {
     const formData = new FormData();
     formData.append('file', fileList[0]);
     const result = await importExcel(formData);
-    if (result) refetch();
+    if (result) {
+      refetch();
+      enqueueSnackbar('Nhập dữ liệu thành công', { variant: 'success' });
+    }
   };
 
   const { control, setValue, watch } = useForm<ExportBody>({

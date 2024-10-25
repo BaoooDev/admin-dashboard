@@ -12,7 +12,7 @@ const Dashboard = () => {
   console.log();
 
   return (
-    <div className='grid h-[calc(100vh-64px-48px)] grid-cols-12 gap-2 bg-[#313f64] md:grid-cols-3'>
+    <div className='grid h-screen grid-cols-12 gap-2 bg-[#313f64] md:grid-cols-3'>
       <div className='rounded-md bg-[#1a4093]'></div>
       <div className='rounded-md bg-[#1a4093]'>
         <Typography variant='h5' className='mt-2 text-center text-white'>

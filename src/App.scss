@@ -35,3 +35,18 @@ body > iframe {
 .recharts-wrapper {
   margin: 0 auto;
 }
+
+@keyframes vertical-scroll {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.animate-vertical-marquee {
+  display: inline-flex;
+  flex-direction: column;
+  animation: vertical-scroll 30s linear infinite;
+}

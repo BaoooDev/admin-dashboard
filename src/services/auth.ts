@@ -7,6 +7,7 @@ const createUser = (body: UserPayloadType): Promise<UserRecordType> => client.po
 
 const queryDashboard = (): Promise<TripCountType[]> => client.get(`/trips/dashboard`);
 const fetchTrips = (params?: TripParams): Promise<TripPaginateType> => client.get(`/trips`, { params });
+const getTripsInMonth = (params?: TripParams): Promise<TripRecordType[]> => client.get(`/trips/in-month`, { params });
 const importExcel = (body: FormData): Promise<TripRecordType[]> => client.post(`/trips/import`, body);
 const exportExcel = (body?: ExportBody): Promise<Blob> => client.post(`/trips/export`, body, { responseType: 'blob' });
 
@@ -19,6 +20,7 @@ const authService = {
   updateUser,
   createUser,
   queryDashboard,
+  getTripsInMonth,
 };
 
 export default authService;

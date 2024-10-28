@@ -1,11 +1,9 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import { default as storage } from 'redux-persist/lib/storage';
-import notification from './notificationSlice';
 import profile from './profileSlice';
 
 const rootReducer = combineReducers({
-  [notification.name]: notification.reducer,
   [profile.name]: profile.reducer,
 });
 

@@ -1,6 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { API_URL } from 'env';
-import { openAlert } from 'reducers/notificationSlice';
+import { enqueueSnackbar } from 'notistack';
 import { signOut } from 'reducers/profileSlice';
 import { store } from 'reducers/store';
 
@@ -29,7 +29,7 @@ const onError = async (error: AxiosError) => {
     }
 
     const message = (data as any).message ?? 'Đã có lỗi xảy ra';
-    store.dispatch(openAlert({ message, variant: 'error' }));
+    enqueueSnackbar({ message, variant: 'error' });
   }
   return Promise.reject(error);
 };

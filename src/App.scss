@@ -36,17 +36,20 @@ body > iframe {
   margin: 0 auto;
 }
 
-@keyframes vertical-scroll {
-  0% {
-    transform: translateY(100%);
-  }
-  100% {
-    transform: translateY(-100%);
-  }
+@keyframes marquee {
+  0% { transform: translateY(0%); }
+  100% { transform: translateY(-100%); }
 }
 
-.animate-vertical-marquee {
-  display: inline-flex;
-  flex-direction: column;
-  animation: vertical-scroll 30s linear infinite;
+@keyframes marquee2 {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(0%); }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee2 {
+  animation: marquee2 25s linear infinite;
 }

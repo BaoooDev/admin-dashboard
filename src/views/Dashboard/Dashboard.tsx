@@ -21,9 +21,9 @@ const Dashboard = () => {
   });
 
   return (
-    <div className='grid h-screen grid-cols-12 grid-rows-2 gap-4 bg-[#313f64] p-4'>
-      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-4'></div>
-      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-4'>
+    <div className='grid h-screen grid-cols-12 grid-rows-2 gap-2 bg-[#313f64]'>
+      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'></div>
+      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>
         <Typography variant='h6' className='mt-2 text-center text-white'>
           TOP 10 ( VỊ TRÍ XẢY RA SỰ CỐ )
         </Typography>
@@ -50,27 +50,36 @@ const Dashboard = () => {
           </ResponsiveContainer>
         )}
       </div>
-      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-4'></div>
-      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-4'>
+      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'></div>
+      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>
         <Typography variant='h6' className='mt-2 text-center uppercase text-white'>
           tổng số sự cố trong tháng: {trips?.length}
         </Typography>
         <div className='h-[90%] overflow-hidden'>
-          <div className='animate-vertical-marquee flex flex-col divide-y'>
+          <div className='animate-marquee flex flex-col divide-y'>
             {trips?.map((item, index) => (
               <div key={index} className='space-y-2 p-2 text-white'>
                 <Chip color='warning' label={item.pathOne} size='small' />
-                <div className='whitespace-nowrap'>{item.pathSecond}</div>
-                <div className='text-sm'>
-                  Thời gian xảy ra: {DateTime.fromISO(item.timeOccurence).toFormat('dd/MM/yyyy HH:mm:ss')}
+                <div>
+                  {DateTime.fromISO(item.timeOccurence).toFormat('dd/MM/yyyy HH:mm:ss')} {item.pathSecond}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className='animate-marquee2 flex flex-col divide-y'>
+            {trips?.map((item, index) => (
+              <div key={index} className='space-y-2 p-2 text-white'>
+                <Chip color='warning' label={item.pathOne} size='small' />
+                <div>
+                  {DateTime.fromISO(item.timeOccurence).toFormat('dd/MM/yyyy HH:mm:ss')} {item.pathSecond}
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-4'></div>
-      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-4'></div>
+      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'></div>
+      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'></div>
     </div>
   );
 };

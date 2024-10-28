@@ -61,7 +61,8 @@ const Dashboard = () => {
               <div key={index} className='space-y-2 p-2 text-white'>
                 <Chip color='warning' label={item.pathOne} size='small' />
                 <div>
-                  {DateTime.fromISO(item.timeOccurence).toFormat('dd/MM/yyyy HH:mm:ss')} {item.pathSecond}
+                  {DateTime.fromISO(item.timeOccurence).toFormat('dd/MM/yyyy HH:mm:ss')}: Mất tín hiệu tại vị trí{' '}
+                  {item.pathSecond}
                 </div>
               </div>
             ))}

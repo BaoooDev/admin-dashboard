@@ -166,7 +166,9 @@ const Home = () => {
             <TableBody>
               {results.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell>{DateTime.fromISO(item.timeOccurence).toFormat('dd/MM/yyyy HH:mm:ss')}</TableCell>
+                  <TableCell>
+                    {DateTime.fromISO(item.timeOccurence, { zone: 'utc' }).toFormat('dd/MM/yyyy HH:mm:ss')}
+                  </TableCell>
                   <TableCell>{item.pathOne}</TableCell>
                   <TableCell>{item.pathSecond}</TableCell>
                   <TableCell>{item.isChecked ? 'Có' : 'Không'}</TableCell>

@@ -22,10 +22,9 @@ const Dashboard = () => {
 
   return (
     <div className='grid h-screen grid-cols-12 grid-rows-2 gap-2 bg-[#313f64]'>
-      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'></div>
       <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>
         <Typography variant='h6' className='mt-2 text-center text-white'>
-          TOP 10 ( VỊ TRÍ XẢY RA SỰ CỐ )
+          top 10 vị trí sự cố (rec, lbs, rmu) trung thế
         </Typography>
         {!isPending && data && (
           <ResponsiveContainer height='90%' width='100%'>
@@ -50,10 +49,19 @@ const Dashboard = () => {
           </ResponsiveContainer>
         )}
       </div>
-      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'></div>
       <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>
         <Typography variant='h6' className='mt-2 text-center uppercase text-white'>
-          tổng số sự cố trong tháng: {trips?.length}
+          top 10 vị trí sự cố (rec, lbs, rmu) trung thế
+        </Typography>
+      </div>
+      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>
+        <Typography variant='h6' className='mt-2 text-center uppercase text-white'>
+          top 10 vị trí sự cố xuất tuyến 110kV
+        </Typography>
+      </div>
+      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>
+        <Typography variant='h6' className='mt-2 text-center uppercase text-white'>
+          Số sự cố (rec, lbs, rmu) trung thế trong tháng: {trips?.length}
         </Typography>
         <div className='h-[90%] overflow-hidden'>
           <div className='animate-marquee flex flex-col divide-y'>
@@ -79,8 +87,16 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'></div>
-      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'></div>
+      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>
+        <Typography variant='h6' className='mt-2 text-center uppercase text-white'>
+          số sự cố xuất tuyến trung thế trong tháng
+        </Typography>
+      </div>
+      <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>
+        <Typography variant='h6' className='mt-2 text-center uppercase text-white'>
+          số sự cố xuất tuyến 110kV trong tháng
+        </Typography>
+      </div>
     </div>
   );
 };

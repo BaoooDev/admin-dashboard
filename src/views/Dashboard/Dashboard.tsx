@@ -23,7 +23,7 @@ const Dashboard = () => {
   return (
     <div className='grid h-screen grid-cols-12 grid-rows-2 gap-2 bg-[#313f64]'>
       <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>
-        <Typography variant='h6' className='mt-2 text-center text-white'>
+        <Typography variant='h6' className='mt-2 text-center uppercase text-white'>
           top 10 vị trí sự cố (rec, lbs, rmu) trung thế
         </Typography>
         {!isPending && data && (
@@ -42,7 +42,11 @@ const Dashboard = () => {
                 interval={0}
                 tick={{ fill: 'white', fontSize: 6, textAnchor: 'end' }}
               />
-              <YAxis interval={1} tick={{ fill: 'white' }} />
+              <YAxis
+                domain={[0, 'dataMax']}
+                ticks={Array.from({ length: Math.max(...data.map((d) => d.count)) + 1 }, (_, i) => i)}
+                tick={{ fill: 'white' }}
+              />
               <Tooltip cursor={{ fill: 'transparent' }} />
               <Bar dataKey='count' fill='#f7af10' barSize={20} />
             </BarChart>
@@ -51,7 +55,7 @@ const Dashboard = () => {
       </div>
       <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>
         <Typography variant='h6' className='mt-2 text-center uppercase text-white'>
-          top 10 vị trí sự cố (rec, lbs, rmu) trung thế
+          số sự cố xuất tuyến trung thế trong tháng
         </Typography>
       </div>
       <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>

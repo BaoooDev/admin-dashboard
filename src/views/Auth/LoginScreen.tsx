@@ -40,7 +40,7 @@ const LoginScreen = () => {
       <div className='flex flex-col items-center justify-center gap-2'>
         <img src={require('assets/images/logo-evnnpc.svg').default} />
         <Typography variant='h4' className='text-center uppercase text-white'>
-          Quản lý Vận hành hệ thống thông tin
+          Phần mềm phân tích logs trên SP5
         </Typography>
       </div>
       <Paper className='mt-4 flex flex-col gap-10 p-8'>

@@ -55,7 +55,7 @@ const Dashboard = () => {
       </div>
       <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>
         <Typography variant='h6' className='mt-2 text-center uppercase text-white'>
-          số sự cố xuất tuyến trung thế trong tháng
+          TOP 10 VỊ TRÍ SỰ CỐ XUẤT TUYẾN TRUNG THẾ
         </Typography>
       </div>
       <div className='col-span-4 row-span-1 rounded-md bg-[#1a4093] p-2'>

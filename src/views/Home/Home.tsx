@@ -1,4 +1,4 @@
-import { FileDownloadOutlined } from '@mui/icons-material';
+import { FileDownloadOutlined, Search } from '@mui/icons-material';
 import {
   Button,
   Grid2,
@@ -22,7 +22,6 @@ import { useSnackbar } from 'notistack';
 import { useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
-import { useDebounce } from 'react-use';
 import { profileSelector } from 'reducers/profileSlice';
 import { authService } from 'services';
 
@@ -61,7 +60,7 @@ const Home = () => {
     }
   };
 
-  const { control, setValue, watch } = useForm<ExportBody>({
+  const { control, setValue, watch, reset } = useForm<ExportBody>({
     defaultValues: {
       from: undefined,
       to: undefined,
@@ -71,30 +70,26 @@ const Home = () => {
 
   const formValues = watch();
 
-  useDebounce(
-    () => {
-      const searchParams: ExportBody = { ...formValues };
-      setSearchParams({
-        from: DateTime.fromISO(searchParams.from!).toISODate(),
-        to: DateTime.fromISO(searchParams.to!).toISODate(),
-        search: searchParams.search === '' ? undefined : searchParams.search,
-      });
-    },
-    500,
-    [JSON.stringify(formValues)],
-  );
+  const handleSearch = () => {
+    const searchParams: ExportBody = { ...formValues };
+    setSearchParams({
+      from: DateTime.fromISO(searchParams.from!).toISODate(),
+      to: DateTime.fromISO(searchParams.to!).toISODate(),
+      search: searchParams.search === '' ? undefined : searchParams.search,
+    });
+  };
 
   return (
     <div className='p-6'>
       <Grid2 container spacing={3}>
-        <Grid2 size={{ xs: 12, md: 3 }}>
+        <Grid2 size={{ xs: 12, md: 2 }}>
           <Controller
             name='search'
             control={control}
             render={({ field }) => <TextField {...field} fullWidth label='Tìm kiếm' />}
           />
         </Grid2>
-        <Grid2 size={{ xs: 12, md: 3 }}>
+        <Grid2 size={{ xs: 12, md: 2 }}>
           <Controller
             control={control}
             name='from'
@@ -112,7 +107,7 @@ const Home = () => {
             )}
           />
         </Grid2>
-        <Grid2 size={{ xs: 12, md: 3 }}>
+        <Grid2 size={{ xs: 12, md: 2 }}>
           <Controller
             control={control}
             name='to'
@@ -131,26 +126,32 @@ const Home = () => {
             )}
           />
         </Grid2>
-      </Grid2>
-      <div className='mt-2 flex items-center justify-end gap-3'>
-        {role === 'admin' && (
-          <div>
-            <input ref={inputRef} type='file' hidden onChange={handleChangeFiles} />
-            <Button
-              variant='outlined'
-              color='primary'
-              startIcon={<FileDownloadOutlined />}
-              onClick={() => inputRef.current?.click()}
-            >
-              Nhập Excel
+        <Grid2 size={{ xs: 12, md: 6 }}>
+          <div className='flex items-center justify-end gap-3'>
+            {role === 'admin' && (
+              <div>
+                <input ref={inputRef} type='file' hidden onChange={handleChangeFiles} />
+                <Button
+                  variant='outlined'
+                  color='primary'
+                  startIcon={<FileDownloadOutlined />}
+                  onClick={() => inputRef.current?.click()}
+                >
+                  Nhập Excel
+                </Button>
+              </div>
+            )}
+
+            <Button variant='outlined' color='primary' startIcon={<FileDownloadOutlined />} onClick={handleExport}>
+              Xuất Excel
+            </Button>
+
+            <Button variant='outlined' color='primary' startIcon={<Search />} onClick={handleSearch}>
+              Tìm kiếm
             </Button>
           </div>
-        )}
-
-        <Button variant='outlined' color='primary' startIcon={<FileDownloadOutlined />} onClick={handleExport}>
-          Xuất Excel
-        </Button>
-      </div>
+        </Grid2>
+      </Grid2>
       <TableContainer component={Paper}>
         <Spinner loading={isPending || isPendingImport}>
           <Table>

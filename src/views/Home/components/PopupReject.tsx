@@ -1,21 +1,19 @@
 import { LoadingButton } from '@mui/lab';
 import { DialogActions, DialogContent, DialogTitle, Grid2, TextField } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
+import { enqueueSnackbar } from 'notistack';
 import { Controller, useForm } from 'react-hook-form';
 import { authService, queryClient } from 'services';
 
-type PopupProps = PopupController & {
-  id: string;
-};
-
-const PopupUpdateUser = ({ id, onClose }: PopupProps) => {
+const PopupReject = ({ id, onClose }: any) => {
   const { control, handleSubmit } = useForm({ mode: 'onChange' });
 
-  const { mutate: updateUser, isPending } = useMutation({
-    mutationFn: authService.updateUser,
-    onSuccess: () => {
+  const { mutate, isPending } = useMutation({
+    mutationFn: authService.reviewWorker,
+    onSuccess: (data) => {
+      enqueueSnackbar({ message: data.message, variant: 'success' });
       queryClient.invalidateQueries({
-        queryKey: ['userService.fetchUsers'],
+        queryKey: ['authService.getPendingWorkers'],
       });
       onClose();
     },
@@ -23,33 +21,30 @@ const PopupUpdateUser = ({ id, onClose }: PopupProps) => {
 
   const handleClickSubmit = () => {
     handleSubmit((values) => {
-      updateUser({
+      mutate({
         id,
+        action: 'reject',
         ...values,
-      } as UpdateUserBody);
+      });
     })();
   };
 
   return (
     <>
-      <DialogTitle>Cập nhật tài khoản</DialogTitle>
+      <DialogTitle>Thông báo</DialogTitle>
 
       <DialogContent>
         <Grid2 container spacing={3}>
           <Grid2 size={12}>
             <Controller
-              name='password'
+              name='reason_reject'
               defaultValue=''
               rules={{
-                required: 'Mật khẩu không được để trống',
-                minLength: {
-                  value: 8,
-                  message: 'Pass phải có ít nhất 8 ký tự',
-                },
+                required: 'Lý do không được để trống',
               }}
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <TextField {...field} fullWidth label='Mật khẩu' error={!!error} helperText={error?.message} />
+                <TextField {...field} fullWidth label='Lý do' error={!!error} helperText={error?.message} />
               )}
             />
           </Grid2>
@@ -61,11 +56,11 @@ const PopupUpdateUser = ({ id, onClose }: PopupProps) => {
           Hủy
         </LoadingButton>
         <LoadingButton variant='contained' color='success' loading={isPending} onClick={handleClickSubmit}>
-          Cập nhật
+          Xác nhận
         </LoadingButton>
       </DialogActions>
     </>
   );
 };
 
-export default PopupUpdateUser;
+export default PopupReject;

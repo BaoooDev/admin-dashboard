@@ -1,190 +1,84 @@
-import { FileDownloadOutlined, Search } from '@mui/icons-material';
-import {
-  Button,
-  Grid2,
-  Pagination,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-} from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
+import { Button, Dialog, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { Spinner, TableRowEmpty } from 'components';
-import { saveAs } from 'file-saver';
-import { useSearch } from 'hooks';
-import { DateTime } from 'luxon';
-import { useSnackbar } from 'notistack';
-import { useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
-import { profileSelector } from 'reducers/profileSlice';
-import { authService } from 'services';
+import { enqueueSnackbar } from 'notistack';
+import { useState } from 'react';
+import { authService, queryClient } from 'services';
+import PopupReject from 'views/Home/components/PopupReject';
 
 const Home = () => {
-  const [searchParams, setSearchParams] = useState({});
-  const { role } = useSelector(profileSelector);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const { enqueueSnackbar } = useSnackbar();
-
-  const [dataSearch, onSearchChange] = useSearch();
-
-  const { data, isPending, refetch } = useQuery({
-    queryKey: ['authService.getTrips', { ...dataSearch, ...searchParams }],
-    queryFn: () => authService.fetchTrips({ ...dataSearch, ...searchParams }),
+  const { data, isPending } = useQuery({
+    queryKey: ['authService.getPendingWorkers'],
+    queryFn: () => authService.getPendingWorkers(),
     placeholderData: keepPreviousData,
   });
-  const { results = [], page, totalPages, totalResults } = data ?? {};
 
-  const { mutateAsync: exportExcelMutation } = useMutation({ mutationFn: authService.exportExcel });
-  const { mutateAsync: importExcel, isPending: isPendingImport } = useMutation({ mutationFn: authService.importExcel });
-
-  const handleExport = async () => {
-    const blob = await exportExcelMutation(searchParams);
-    saveAs(blob, 'thong_ke_su_co.xlsx');
-  };
-
-  const handleChangeFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = event.target.files;
-    if (!fileList) return;
-    const formData = new FormData();
-    formData.append('file', fileList[0]);
-    const result = await importExcel(formData);
-    if (result) {
-      refetch();
-      enqueueSnackbar('Nhập dữ liệu thành công', { variant: 'success' });
-    }
-  };
-
-  const { control, setValue, watch, reset } = useForm<ExportBody>({
-    defaultValues: {
-      from: undefined,
-      to: undefined,
-      search: undefined,
+  const { mutate } = useMutation({
+    mutationFn: authService.reviewWorker,
+    onSuccess: (data) => {
+      enqueueSnackbar({ message: data.message, variant: 'success' });
+      queryClient.invalidateQueries({
+        queryKey: ['authService.getPendingWorkers'],
+      });
     },
   });
 
-  const formValues = watch();
-
-  const handleSearch = () => {
-    const searchParams: ExportBody = { ...formValues };
-    setSearchParams({
-      from: DateTime.fromISO(searchParams.from!).toISODate(),
-      to: DateTime.fromISO(searchParams.to!).toISODate(),
-      search: searchParams.search === '' ? undefined : searchParams.search,
-    });
+  const handleApprove = (id: any) => {
+    mutate({ action: 'approve', id });
   };
+
+  const [openReject, setOpenReject] = useState(false);
+  const [selectedId, setSelectedId] = useState();
 
   return (
     <div className='p-6'>
-      <Grid2 container spacing={3}>
-        <Grid2 size={{ xs: 12, md: 2 }}>
-          <Controller
-            name='search'
-            control={control}
-            render={({ field }) => <TextField {...field} fullWidth label='Tìm kiếm' />}
-          />
-        </Grid2>
-        <Grid2 size={{ xs: 12, md: 2 }}>
-          <Controller
-            control={control}
-            name='from'
-            render={({ field }) => (
-              <DatePicker
-                format='dd/MM/yyyy'
-                label='Từ ngày'
-                {...field}
-                closeOnSelect
-                slotProps={{
-                  field: { clearable: true, onClear: () => setValue('from', undefined) },
-                  textField: { fullWidth: true },
-                }}
-              />
-            )}
-          />
-        </Grid2>
-        <Grid2 size={{ xs: 12, md: 2 }}>
-          <Controller
-            control={control}
-            name='to'
-            render={({ field }) => (
-              <DatePicker
-                format='dd/MM/yyyy'
-                label='Đến ngày'
-                {...field}
-                minDate={watch('from') || null}
-                closeOnSelect
-                slotProps={{
-                  field: { clearable: true, onClear: () => setValue('to', undefined) },
-                  textField: { fullWidth: true },
-                }}
-              />
-            )}
-          />
-        </Grid2>
-        <Grid2 size={{ xs: 12, md: 6 }}>
-          <div className='flex items-center justify-end gap-3'>
-            {role === 'admin' && (
-              <div>
-                <input ref={inputRef} type='file' hidden onChange={handleChangeFiles} />
-                <Button
-                  variant='outlined'
-                  color='primary'
-                  startIcon={<FileDownloadOutlined />}
-                  onClick={() => inputRef.current?.click()}
-                >
-                  Nhập Excel
-                </Button>
-              </div>
-            )}
-
-            <Button variant='outlined' color='primary' startIcon={<FileDownloadOutlined />} onClick={handleExport}>
-              Xuất Excel
-            </Button>
-
-            <Button variant='outlined' color='primary' startIcon={<Search />} onClick={handleSearch}>
-              Tìm kiếm
-            </Button>
-          </div>
-        </Grid2>
-      </Grid2>
       <TableContainer component={Paper}>
-        <Spinner loading={isPending || isPendingImport}>
+        <Spinner loading={isPending}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Thời gian</TableCell>
-                <TableCell>Địa điểm</TableCell>
-                <TableCell>Vị trí</TableCell>
-                <TableCell>Cần kiểm tra lại</TableCell>
-                <TableCell></TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Thao tác</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {results.map((item) => (
-                <TableRow key={item.id}>
+              {data?.data?.map((item: any) => (
+                <TableRow key={item._id}>
+                  <TableCell>{item.email}</TableCell>
                   <TableCell>
-                    {DateTime.fromISO(item.timeOccurence, { zone: 'utc' }).toFormat('dd/MM/yyyy HH:mm:ss')}
+                    <div className='flex items-center gap-4'>
+                      <Button
+                        variant='contained'
+                        onClick={() => {
+                          handleApprove(item._id);
+                        }}
+                      >
+                        Phê duyệt
+                      </Button>
+                      <Button
+                        variant='contained'
+                        color='error'
+                        onClick={() => {
+                          setSelectedId(item._id);
+                          setOpenReject(true);
+                        }}
+                      >
+                        Từ chối
+                      </Button>
+                    </div>
                   </TableCell>
-                  <TableCell>{item.pathOne}</TableCell>
-                  <TableCell>{item.pathSecond}</TableCell>
-                  <TableCell>{item.isChecked ? 'Có' : 'Không'}</TableCell>
                 </TableRow>
               ))}
-              <TableRowEmpty visible={!isPending && totalResults === 0} />
+              <TableRowEmpty visible={!isPending && data?.data?.length === 0} />
             </TableBody>
-            <caption>{totalResults ?? 0} Sự cố</caption>
+            <caption>{data?.data?.length ?? 0} Workers</caption>
           </Table>
         </Spinner>
       </TableContainer>
 
-      <div className='flex justify-center'>
-        <Pagination page={page ?? 1} count={totalPages} onChange={(event, value) => onSearchChange({ page: value })} />
-      </div>
+      <Dialog open={openReject}>
+        <PopupReject id={selectedId} onClose={() => setOpenReject(false)} />
+      </Dialog>
     </div>
   );
 };

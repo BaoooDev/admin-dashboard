@@ -1,26 +1,29 @@
 import { client } from './axios';
 
-const login = (body: LoginBody): Promise<LoginResponse> => client.post(`/auth/login`, body);
-const fetchUsers = (params?: UserParams): Promise<UserPaginateType> => client.get(`/users`, { params });
-const updateUser = ({ id, ...body }: UpdateUserBody): Promise<UserRecordType> => client.put(`/users/${id}`, body);
-const createUser = (body: UserPayloadType): Promise<UserRecordType> => client.post(`/users`, body);
-
-const queryDashboard = (): Promise<TripCountType[]> => client.get(`/trips/dashboard`);
-const fetchTrips = (params?: TripParams): Promise<TripPaginateType> => client.get(`/trips`, { params });
-const getTripsInMonth = (params?: TripParams): Promise<TripRecordType[]> => client.get(`/trips/in-month`, { params });
-const importExcel = (body: FormData): Promise<TripRecordType[]> => client.post(`/trips/import`, body);
-const exportExcel = (body?: ExportBody): Promise<Blob> => client.post(`/trips/export`, body, { responseType: 'blob' });
+const login = (body: any): Promise<any> => client.post(`/login`, body);
+const getPendingWorkers = (): Promise<any> => client.get(`/pendingWorkers`);
+const reviewWorker = ({ id, ...body }: any): Promise<any> => client.put(`/reviewWorker/${id}`, body);
+const getServices = (): Promise<any> => client.get(`/services`);
+const updateService = ({ id, ...body }: any): Promise<any> => client.put(`/service/${id}`, body);
+const getMonthlyRevenue = (): Promise<any> => client.get(`/stats/monthly-revenue`);
+const getTotalRevenue = (): Promise<any> => client.get(`/stats/total-revenue`);
+const getServiceRevenue = (): Promise<any> => client.get(`/stats/service-revenue`);
+const getMostBookedService = (): Promise<any> => client.get(`/stats/most-booked-service`);
+const getWorkerRankings = (): Promise<any> => client.get(`/stats/worker-rankings`);
+const getTopClients = (): Promise<any> => client.get(`/stats/top-clients`);
 
 const authService = {
   login,
-  exportExcel,
-  importExcel,
-  fetchUsers,
-  fetchTrips,
-  updateUser,
-  createUser,
-  queryDashboard,
-  getTripsInMonth,
+  getPendingWorkers,
+  reviewWorker,
+  getServices,
+  updateService,
+  getMonthlyRevenue,
+  getTotalRevenue,
+  getServiceRevenue,
+  getMostBookedService,
+  getWorkerRankings,
+  getTopClients,
 };
 
 export default authService;

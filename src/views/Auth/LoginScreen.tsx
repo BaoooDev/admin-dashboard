@@ -14,8 +14,8 @@ const LoginScreen = () => {
 
   const { mutate: login, isPending } = useMutation({
     mutationFn: authService.login,
-    onSuccess: ({ user, tokens }: LoginResponse) => {
-      dispatch(signIn({ ...user, accessToken: tokens.access.token }));
+    onSuccess: (data) => {
+      dispatch(signIn(data));
     },
   });
 
@@ -27,20 +27,15 @@ const LoginScreen = () => {
 
   const handleClickSubmit = () => {
     handleSubmit((values) => {
-      if (values.email === 'admindev' && values.password === '123123') {
-        login({ email: 'admindev', password: '123123' } as LoginBody);
-      } else {
-        login(values as LoginBody);
-      }
+      login(values);
     })();
   };
 
   return (
     <Container maxWidth='sm'>
       <div className='flex flex-col items-center justify-center gap-2'>
-        <img src={require('assets/images/logo-evnnpc.svg').default} />
-        <Typography variant='h4' className='text-center uppercase text-white'>
-          Phần mềm phân tích logs trên SP5
+        <Typography variant='h4' className='text-center uppercase text-primary-main'>
+          phần mềm quản lý
         </Typography>
       </div>
       <Paper className='mt-4 flex flex-col gap-10 p-8'>

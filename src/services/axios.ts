@@ -5,10 +5,10 @@ import { signOut } from 'reducers/profileSlice';
 import { store } from 'reducers/store';
 
 const beforeRequest = (config: InternalAxiosRequestConfig) => {
-  const { isLoggedIn, accessToken }: ProfileRecordType = store.getState().profile;
+  const { isLoggedIn, token } = store.getState().profile;
   if (isLoggedIn) {
     Object.assign(config.headers as any, {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${token}`,
     });
   }
 
@@ -28,7 +28,7 @@ const onError = async (error: AxiosError) => {
       store.dispatch(signOut({}));
     }
 
-    const message = (data as any).message ?? 'Đã có lỗi xảy ra';
+    const message = (data as any).msg ?? 'Đã có lỗi xảy ra';
     enqueueSnackbar({ message, variant: 'error' });
   }
   return Promise.reject(error);

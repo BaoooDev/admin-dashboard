@@ -11,7 +11,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const { isLoggedIn, name } = useSelector(profileSelector);
+  const { isLoggedIn, user } = useSelector(profileSelector);
 
   const [openDrawer, setOpenDrawer] = useState(false);
 
@@ -30,7 +30,7 @@ const Header = () => {
       >
         <div className='flex h-[56px] items-center justify-center'>
           <Link to={privateRoute.home.path}>
-            <span className='text-2xl font-bold text-red-500'>PCTH</span>
+            <span className='text-2xl font-bold text-red-500'>ADMIN</span>
           </Link>
         </div>
         <AppMenu />
@@ -47,7 +47,7 @@ const Header = () => {
             <div className='flex flex-1 items-center justify-end'>
               <Button variant='outlined' color='warning'>
                 <Avatar className='mr-2 h-6 w-6 text-sm' />
-                {name}
+                {user?.full_name}
               </Button>
               <Tooltip title='Đăng xuất'>
                 <IconButton className='mx-3' onClick={() => dispatch(signOut({}))}>

@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Typography, Button } from '@mui/material';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import {
   Bar,
@@ -14,6 +14,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import * as XLSX from 'xlsx';
 import { authService } from 'services';
 
 const Statistic = () => {
@@ -57,6 +58,40 @@ const Statistic = () => {
     return `${entry.name} - ${entry.totalRevenue}`;
   };
 
+  const exportToExcel = () => {
+    try {
+      // Ensure all datasets are available and log any missing ones
+      if (!data?.data) console.warn("Monthly Revenue data is missing.");
+      if (!dataSecond?.data) console.warn("Total Revenue data is missing.");
+      if (!dataThird?.data) console.warn("Service Revenue data is missing.");
+      if (!dataFour?.data) console.warn("Most Booked Services data is missing.");
+      if (!dataFive?.data) console.warn("Worker Rankings data is missing.");
+  
+      // Prepare sheets for each dataset
+      const monthlyRevenueSheet = XLSX.utils.json_to_sheet(data?.data || []);
+      const totalRevenueSheet = XLSX.utils.json_to_sheet([{ TotalRevenue: dataSecond?.data || 0 }]);
+      const serviceRevenueSheet = XLSX.utils.json_to_sheet(dataThird?.data || []);
+      const mostBookedServiceSheet = XLSX.utils.json_to_sheet(dataFour?.data || []);
+      const workerRankingSheet = XLSX.utils.json_to_sheet(dataFive?.data || []);
+  
+      // Create a new workbook and append sheets
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, monthlyRevenueSheet, 'Monthly Revenue');
+      XLSX.utils.book_append_sheet(workbook, totalRevenueSheet, 'Total Revenue');
+      XLSX.utils.book_append_sheet(workbook, serviceRevenueSheet, 'Service Revenue');
+      XLSX.utils.book_append_sheet(workbook, mostBookedServiceSheet, 'Most Booked Services');
+      XLSX.utils.book_append_sheet(workbook, workerRankingSheet, 'Worker Rankings');
+  
+      // Write the workbook to a file
+      XLSX.writeFile(workbook, 'statistics_report.xlsx');
+      alert("File exported successfully!");
+    } catch (error) {
+      console.error("Error exporting Excel file:", error);
+      alert("Failed to export file. See console for details.");
+    }
+  };
+  
+  
   return (
     <div className='grid h-screen grid-cols-2 grid-rows-2 gap-8'>
       <div className='p-2'>
@@ -141,6 +176,11 @@ const Statistic = () => {
             </BarChart>
           </ResponsiveContainer>
         )}
+      </div>
+      <div className='col-span-2 flex justify-center'>
+        <Button variant='contained' color='primary' onClick={exportToExcel}>
+          Export to Excel
+        </Button>
       </div>
     </div>
   );

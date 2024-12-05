@@ -37,14 +37,21 @@ const Home = () => {
           <Table>
             <TableHead>
               <TableRow>
+              <TableCell>Họ tên</TableCell>
                 <TableCell>Email</TableCell>
+                <TableCell>Căn Cước</TableCell>
+                <TableCell>Số điện thoại</TableCell>
                 <TableCell>Thao tác</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {data?.data?.map((item: any) => (
                 <TableRow key={item._id}>
+                  <TableCell>{item.full_name}</TableCell>
                   <TableCell>{item.email}</TableCell>
+                  <TableCell>{item.worker_profile.identity_number}</TableCell>
+                  <TableCell>{item.phone_number}</TableCell>
+
                   <TableCell>
                     <div className='flex items-center gap-4'>
                       <Button

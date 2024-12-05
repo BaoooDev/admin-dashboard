@@ -5,6 +5,8 @@ import {
   SettingsOutlined,
   StarOutlineSharp,
   VerifiedUser,
+  BadgeSharp,
+  ListAlt,
 } from '@mui/icons-material';
 import { Collapse, List, ListItemButton, ListItemText } from '@mui/material';
 import { styled } from '@mui/system';
@@ -81,6 +83,9 @@ const Menu = () => {
       <MenuItem {...privateRoute.service} icon={<RoomService />} />
       <MenuItem {...privateRoute.statistic} icon={<StarOutlineSharp />} />
       <MenuItem {...privateRoute.user} icon={<VerifiedUser />} />
+      <MenuItem {...privateRoute.worker} icon={<BadgeSharp />} />
+      <MenuItem {...privateRoute.jobs} icon={<ListAlt />} />
+
     </List>
   );
 };

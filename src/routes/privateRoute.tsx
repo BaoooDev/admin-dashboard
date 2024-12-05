@@ -2,7 +2,8 @@ import { Home } from 'views/Home';
 import Service from 'views/Services';
 import Statistic from 'views/Statistic';
 import User from 'views/User';
-
+import Jobs from 'views/Jobs'
+import {Worker} from 'views/Worker';
 const privateRoute = {
   home: {
     path: '/home',
@@ -23,6 +24,16 @@ const privateRoute = {
     path: '/user',
     name: 'Người dùng',
     component: <User />,
+  },
+  worker: {
+    path: '/worker',
+    name: 'Nhân viên',
+    component: <Worker />,
+  },
+  jobs: {
+    path: '/jobs',
+    name: 'Công việc',
+    component: <Jobs />,
   },
 };
 

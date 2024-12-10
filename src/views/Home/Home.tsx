@@ -41,6 +41,7 @@ const Home = () => {
                 <TableCell>Email</TableCell>
                 <TableCell>Căn Cước</TableCell>
                 <TableCell>Số điện thoại</TableCell>
+                <TableCell>Dịch vụ</TableCell>
                 <TableCell>Thao tác</TableCell>
               </TableRow>
             </TableHead>
@@ -51,6 +52,7 @@ const Home = () => {
                   <TableCell>{item.email}</TableCell>
                   <TableCell>{item.worker_profile.identity_number}</TableCell>
                   <TableCell>{item.phone_number}</TableCell>
+                  <TableCell>{item.services?.join(', ')}</TableCell>
 
                   <TableCell>
                     <div className='flex items-center gap-4'>

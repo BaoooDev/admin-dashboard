@@ -94,6 +94,23 @@ const Statistic = () => {
   
   return (
     <div className='grid h-screen grid-cols-2 grid-rows-2 gap-8'>
+     
+      <div className='p-2'>
+        <Typography variant='h6' className='text-center'>
+          Doanh thu dịch vụ
+        </Typography>
+        {!isPending && dataThird?.data && (
+          <ResponsiveContainer width='100%' height='100%'>
+            <PieChart>
+              <Pie data={dataThird?.data} fill='#8884d8' label={renderSeviceLabel} dataKey='totalRevenue'>
+                {dataThird?.data.map((entry: any, index: number) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        )}
+      </div>
       <div className='p-2'>
         <Typography variant='h6' className='text-center'>
           Doanh thu tháng / Tổng ( {dataSecond?.data ?? 0} )
@@ -122,22 +139,6 @@ const Statistic = () => {
       </div>
       <div className='p-2'>
         <Typography variant='h6' className='text-center'>
-          Doanh thu dịch vụ
-        </Typography>
-        {!isPending && dataThird?.data && (
-          <ResponsiveContainer width='100%' height='100%'>
-            <PieChart>
-              <Pie data={dataThird?.data} fill='#8884d8' label={renderSeviceLabel} dataKey='totalRevenue'>
-                {dataThird?.data.map((entry: any, index: number) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
-        )}
-      </div>
-      <div className='p-2'>
-        <Typography variant='h6' className='text-center'>
           Dịch vụ được đặt nhiều
         </Typography>
         {!isPending && dataFour?.data && (
@@ -154,7 +155,7 @@ const Statistic = () => {
       </div>
       <div className='p-2'>
         <Typography variant='h6' className='text-center'>
-          Worker Ranking
+          Xếp hạng nhân viên
         </Typography>
         {!isPending && dataFive?.data && (
           <ResponsiveContainer width='100%' height='100%'>
@@ -179,7 +180,7 @@ const Statistic = () => {
       </div>
       <div className='col-span-2 flex justify-center'>
         <Button variant='contained' color='primary' onClick={exportToExcel}>
-          Export to Excel
+          Xuất báo cáo 
         </Button>
       </div>
     </div>

@@ -1,4 +1,5 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,  Button,
+} from '@mui/material';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Spinner, TableRowEmpty } from 'components';
 import { authService } from 'services';
@@ -20,11 +21,12 @@ const Worker = () => {
               <TableRow>
                 <TableCell>Họ tên</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Số lượng công việc</TableCell>
+                <TableCell>Số lượng công việc đã nhận</TableCell>
                 <TableCell>Đánh giá trung bình</TableCell>
-                <TableCell>Căn cước</TableCell>
                 <TableCell>Số điện thoại</TableCell>
                 <TableCell>Địa chỉ</TableCell>
+                <TableCell>Thao tác</TableCell>
+
               </TableRow>
             </TableHead>
             <TableBody>
@@ -34,14 +36,21 @@ const Worker = () => {
                   <TableCell>{worker.email}</TableCell>
                   <TableCell>{worker.jobCount}</TableCell>
                   <TableCell>{worker.averageRating ?? 'N/A'}</TableCell>
-                  <TableCell>{worker.identity_number || 'N/A'}</TableCell>
                   <TableCell>{worker.phoneNumber || 'N/A'}</TableCell>
                   <TableCell>{worker.address || 'N/A'}</TableCell>
+                  <TableCell>
+                        <Button
+                          variant="contained"
+                          color="error"
+                        >
+                          Xóa tài khoản
+                        </Button>
+                  </TableCell>
                 </TableRow>
               ))}
               <TableRowEmpty visible={!isPending && data?.data?.length === 0} />
             </TableBody>
-            <caption>{data?.data?.length ?? 0} Workers</caption>
+            <caption>{data?.data?.length ?? 0} Nhân viên</caption>
           </Table>
         </Spinner>
       </TableContainer>

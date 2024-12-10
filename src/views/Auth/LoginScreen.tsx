@@ -35,7 +35,7 @@ const LoginScreen = () => {
     <Container maxWidth='sm'>
       <div className='flex flex-col items-center justify-center gap-2'>
         <Typography variant='h4' className='text-center uppercase text-primary-main'>
-          phần mềm quản lý
+          phần mềm quản lý TBKEE
         </Typography>
       </div>
       <Paper className='mt-4 flex flex-col gap-10 p-8'>

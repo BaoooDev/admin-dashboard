@@ -7,7 +7,7 @@ import {Worker} from 'views/Worker';
 const privateRoute = {
   home: {
     path: '/home',
-    name: 'Trang chủ',
+    name: 'Phê duyệt',
     component: <Home />,
   },
   service: {

@@ -1,14 +1,24 @@
 import { LoadingButton } from '@mui/lab';
-import { DialogActions, DialogContent, DialogTitle, Grid2, TextField } from '@mui/material';
+import { DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { InputNumber } from 'components';
 import { enqueueSnackbar } from 'notistack';
 import { Controller, useForm } from 'react-hook-form';
 import { authService, queryClient } from 'services';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 
 const PopupUpdate = ({ item, onClose }: any) => {
+  const schema = Yup.object().shape({
+    base_price: Yup.number().required('Giá cơ bản là bắt buộc').min(0),
+    price_per_hour: Yup.number().required('Giá theo giờ là bắt buộc').min(0),
+    front_load: Yup.number().required('Giá máy giặt cửa trước là bắt buộc').min(0),
+    top_load: Yup.number().required('Giá máy giặt cửa trên là bắt buộc').min(0),
+  });
+
   const { control, handleSubmit } = useForm({
     mode: 'onChange',
+    resolver: yupResolver(schema),
     defaultValues: {
       base_price: item.base_price ?? 0,
       price_per_hour: item.price_per_hour ?? 0,
@@ -17,16 +27,24 @@ const PopupUpdate = ({ item, onClose }: any) => {
     },
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, status } = useMutation({
     mutationFn: authService.updateService,
     onSuccess: (data) => {
-      enqueueSnackbar({ message: data.message, variant: 'success' });
+      enqueueSnackbar(data.message, { variant: 'success' });
       queryClient.invalidateQueries({
         queryKey: ['authService.getServices'],
       });
-      onClose();
+            onClose();
     },
+    onError: (error: any) => {
+      const errorMessage =
+        (error.response?.data?.message as string) || 'Có lỗi xảy ra khi cập nhật dịch vụ.';
+      enqueueSnackbar(errorMessage, { variant: 'error' });
+    }
+    
   });
+
+  const isPending = status === 'pending';
 
   const handleClickSubmit = () => {
     handleSubmit((values) => {
@@ -41,8 +59,8 @@ const PopupUpdate = ({ item, onClose }: any) => {
     <>
       <DialogTitle>Cập nhật</DialogTitle>
       <DialogContent>
-        <Grid2 container spacing={3}>
-          <Grid2 size={12}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
             <Controller
               control={control}
               name='base_price'
@@ -54,16 +72,14 @@ const PopupUpdate = ({ item, onClose }: any) => {
                   {...field}
                   error={!!error}
                   helperText={error?.message}
-                  slotProps={{
-                    input: {
-                      inputComponent: InputNumber,
-                    },
+                  InputProps={{
+                    inputComponent: InputNumber,
                   }}
                 />
               )}
             />
-          </Grid2>
-          <Grid2 size={12}>
+          </Grid>
+          <Grid item xs={12}>
             <Controller
               control={control}
               name='price_per_hour'
@@ -75,16 +91,14 @@ const PopupUpdate = ({ item, onClose }: any) => {
                   {...field}
                   error={!!error}
                   helperText={error?.message}
-                  slotProps={{
-                    input: {
-                      inputComponent: InputNumber,
-                    },
+                  InputProps={{
+                    inputComponent: InputNumber,
                   }}
                 />
               )}
             />
-          </Grid2>
-          <Grid2 size={12}>
+          </Grid>
+          <Grid item xs={12}>
             <Controller
               control={control}
               name='front_load'
@@ -96,16 +110,14 @@ const PopupUpdate = ({ item, onClose }: any) => {
                   {...field}
                   error={!!error}
                   helperText={error?.message}
-                  slotProps={{
-                    input: {
-                      inputComponent: InputNumber,
-                    },
+                  InputProps={{
+                    inputComponent: InputNumber,
                   }}
                 />
               )}
             />
-          </Grid2>
-          <Grid2 size={12}>
+          </Grid>
+          <Grid item xs={12}>
             <Controller
               control={control}
               name='top_load'
@@ -117,22 +129,25 @@ const PopupUpdate = ({ item, onClose }: any) => {
                   {...field}
                   error={!!error}
                   helperText={error?.message}
-                  slotProps={{
-                    input: {
-                      inputComponent: InputNumber,
-                    },
+                  InputProps={{
+                    inputComponent: InputNumber,
                   }}
                 />
               )}
             />
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <LoadingButton variant='outlined' color='inherit' onClick={onClose}>
           Hủy
         </LoadingButton>
-        <LoadingButton variant='contained' color='success' loading={isPending} onClick={handleClickSubmit}>
+        <LoadingButton
+          variant='contained'
+          color='success'
+          loading={isPending}
+          onClick={handleClickSubmit}
+        >
           Xác nhận
         </LoadingButton>
       </DialogActions>

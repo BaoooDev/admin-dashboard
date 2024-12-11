@@ -14,6 +14,10 @@ const getWorkerRankings = (): Promise<any> => client.get(`/stats/worker-rankings
 const getTopClients = (): Promise<any> => client.get(`/stats/top-clients`);
 const getWorkerReviews = (): Promise<any> => client.get(`/reviews/workers`);
 const getJobReviews = (): Promise<any> => client.get(`/reviews/jobs`);
+const blockWorkerAccount = (workerId: string, action: string): Promise<any> => {
+  return client.put(`/workers/${workerId}/block`, { action });
+};
+
 
 const getAllJobs = (params: {
   page: number;
@@ -45,7 +49,8 @@ const authService = {
   getAllWorkers,
   cancelJob,
   getWorkerReviews,
-  getJobReviews
+  getJobReviews,
+  blockWorkerAccount
 };
 
 export default authService;

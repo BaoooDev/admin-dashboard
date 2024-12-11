@@ -1,21 +1,48 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,  Button,
+import React from 'react';
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
 } from '@mui/material';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery, useMutation } from '@tanstack/react-query';
 import { Spinner, TableRowEmpty } from 'components';
 import { authService } from 'services';
+import { useSnackbar } from 'notistack';
 
 const Worker = () => {
-  // Fetch worker data
-  const { data, isPending } = useQuery({
-    queryKey: ['authService.getAllWorkers'], // Updated query key to match the new data
-    queryFn: () => authService.getAllWorkers(), // Fetch all worker info
+  const { enqueueSnackbar } = useSnackbar();
+
+  const { data, isFetching, refetch } = useQuery({
+    queryKey: ['authService.getAllWorkers'],
+    queryFn: () => authService.getAllWorkers(),
     placeholderData: keepPreviousData,
   });
+
+  const blockWorker = useMutation({
+    mutationFn: ({ workerId, action }: { workerId: string; action: string }) =>
+      authService.blockWorkerAccount(workerId, action),
+    onSuccess: () => {
+      enqueueSnackbar('Thao tác thành công!', { variant: 'success' });
+      refetch(); 
+    },
+    onError: (error: any) => {
+      enqueueSnackbar(
+        error?.response?.data?.message || error?.message || 'Có lỗi xảy ra!',
+        { variant: 'error' }
+      );
+    },
+  });
+  const isMutating = blockWorker.status === 'pending';
 
   return (
     <div className="p-6">
       <TableContainer component={Paper}>
-        <Spinner loading={isPending}>
+        <Spinner loading={isFetching || isMutating}>
           <Table>
             <TableHead>
               <TableRow>
@@ -26,7 +53,6 @@ const Worker = () => {
                 <TableCell>Số điện thoại</TableCell>
                 <TableCell>Địa chỉ</TableCell>
                 <TableCell>Thao tác</TableCell>
-
               </TableRow>
             </TableHead>
             <TableBody>
@@ -39,16 +65,23 @@ const Worker = () => {
                   <TableCell>{worker.phoneNumber || 'N/A'}</TableCell>
                   <TableCell>{worker.address || 'N/A'}</TableCell>
                   <TableCell>
-                        <Button
-                          variant="contained"
-                          color="error"
-                        >
-                          Xóa tài khoản
-                        </Button>
+                    <Button
+                      variant="contained"
+                      color={worker.isVerified === 'blocked' ? 'primary' : 'error'}
+                      disabled={isMutating} // Disable button while mutation is in progress
+                      onClick={() =>
+                        blockWorker.mutate({
+                          workerId: worker.workerId,
+                          action: worker.isVerified === 'blocked' ? 'unblock' : 'block',
+                        })
+                      }
+                    >
+                      {worker.isVerified === 'blocked' ? 'Mở khóa' : 'Khóa tài khoản'}
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
-              <TableRowEmpty visible={!isPending && data?.data?.length === 0} />
+              <TableRowEmpty visible={!isFetching && data?.data?.length === 0} />
             </TableBody>
             <caption>{data?.data?.length ?? 0} Nhân viên</caption>
           </Table>
